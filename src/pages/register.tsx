@@ -4,14 +4,13 @@ import { Input } from '@heroui/input'
 import { Button } from '@heroui/button'
 import { useNavigate } from 'react-router-dom'
 
-import DefaultLayout from '@/layouts/default'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { registerUser } from '@/store/slices/authSlice'
 
 export default function RegisterPage() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { token } = useAppSelector(state => state.auth)
+  const { token, user } = useAppSelector(state => state.auth)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -20,10 +19,10 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (token) {
-      navigate('/login', { replace: true })
+    if (token && user) {
+      navigate(`/user/${user.id}/projects`, { replace: true })
     }
-  }, [token, navigate])
+  }, [token, user, navigate])
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -55,24 +54,24 @@ export default function RegisterPage() {
   }
 
   return (
-    <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-6 py-10">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Crear cuenta</h1>
-          <p className="text-default-500">
-            Regístrate para gestionar tus proyectos
-          </p>
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Analysat</h1>
+          <p className="text-default-500">Crea tu cuenta</p>
         </div>
 
-        <form className="w-full max-w-sm space-y-4" onSubmit={onSubmit}>
+        <form className="space-y-4" onSubmit={onSubmit}>
           <Input
             isRequired
+            className="w-full"
             label="Nombre completo"
             value={name}
             onChange={e => setName(e.target.value)}
           />
           <Input
             isRequired
+            className="w-full"
             label="Email"
             type="email"
             value={email}
@@ -80,6 +79,7 @@ export default function RegisterPage() {
           />
           <Input
             isRequired
+            className="w-full"
             label="Contraseña"
             type="password"
             value={password}
@@ -87,13 +87,20 @@ export default function RegisterPage() {
           />
           <Input
             isRequired
+            className="w-full"
             label="Confirmar contraseña"
             type="password"
             value={confirmPassword}
             onChange={e => setConfirmPassword(e.target.value)}
           />
-          {error && <p className="text-danger text-sm">{error}</p>}
-          <Button fullWidth color="primary" isLoading={loading} type="submit">
+          {error && <p className="text-danger text-sm text-center">{error}</p>}
+          <Button
+            fullWidth
+            className="mt-6"
+            color="primary"
+            isLoading={loading}
+            type="submit"
+          >
             Registrarse
           </Button>
         </form>
@@ -106,7 +113,7 @@ export default function RegisterPage() {
             </Link>
           </p>
         </div>
-      </section>
-    </DefaultLayout>
+      </div>
+    </div>
   )
 }

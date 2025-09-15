@@ -4,10 +4,10 @@ import { Button } from '@heroui/button'
 import { Input } from '@heroui/input'
 import { Card, CardHeader } from '@heroui/card'
 
-import DefaultLayout from '@/layouts/default'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { createProject, fetchProjects } from '@/store/slices/projectsSlice'
 import { fetchTasks, Task } from '@/store/slices/tasksSlice'
+import { logoutAndClear } from '@/store/slices/authSlice'
 
 export default function ProjectsPage() {
   const { userId } = useParams<{ userId: string }>()
@@ -60,8 +60,18 @@ export default function ProjectsPage() {
     }
   }
 
+  const handleLogout = () => {
+    dispatch(logoutAndClear() as any)
+    navigate('/login', { replace: true })
+  }
+
   return (
-    <DefaultLayout>
+    <div className="min-h-screen bg-background">
+      <div className="flex justify-end p-4">
+        <Button color="danger" variant="flat" onPress={handleLogout}>
+          Cerrar sesión
+        </Button>
+      </div>
       <section className="container mx-auto max-w-3xl py-8 space-y-8">
         <form
           className="grid grid-cols-1 md:grid-cols-3 gap-3"
@@ -132,6 +142,6 @@ export default function ProjectsPage() {
           {projStatus === 'loading' && <p>Cargando...</p>}
         </div>
       </section>
-    </DefaultLayout>
+    </div>
   )
 }

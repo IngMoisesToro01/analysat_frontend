@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Button } from '@heroui/button'
 import { Input } from '@heroui/input'
@@ -6,7 +6,6 @@ import { Card, CardHeader } from '@heroui/card'
 import { Chip } from '@heroui/chip'
 import { Select, SelectItem } from '@heroui/select'
 
-import DefaultLayout from '@/layouts/default'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
   fetchTasks,
@@ -15,6 +14,7 @@ import {
   deleteTask,
   Task,
 } from '@/store/slices/tasksSlice'
+import { logoutAndClear } from '@/store/slices/authSlice'
 
 export default function TasksPage() {
   const { userId, projectId } = useParams<{
@@ -76,7 +76,21 @@ export default function TasksPage() {
   }
 
   const onDeleteTask = async (taskId: number) => {
-    await dispatch(deleteTask({ task_id: taskId })).unwrap()
+    if (window.confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
+      try {
+        console.log('Eliminando tarea con ID:', taskId)
+        await dispatch(deleteTask({ task_id: taskId })).unwrap()
+        console.log('Tarea eliminada exitosamente')
+      } catch (error) {
+        console.error('Error al eliminar tarea:', error)
+        alert('Error al eliminar la tarea. Por favor, inténtalo de nuevo.')
+      }
+    }
+  }
+
+  const handleLogout = () => {
+    dispatch(logoutAndClear() as any)
+    navigate('/login', { replace: true })
   }
 
   const filteredTasks = useMemo(() => {
@@ -112,7 +126,12 @@ export default function TasksPage() {
   }
 
   return (
-    <DefaultLayout>
+    <div className="min-h-screen bg-background">
+      <div className="flex justify-end p-4">
+        <Button color="danger" variant="flat" onPress={handleLogout}>
+          Cerrar sesión
+        </Button>
+      </div>
       <section className="container mx-auto max-w-4xl py-8 space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -173,18 +192,10 @@ export default function TasksPage() {
               setStatusFilter(selected)
             }}
           >
-            <SelectItem key="all" value="all">
-              Todos
-            </SelectItem>
-            <SelectItem key="pending" value="pending">
-              Pendiente
-            </SelectItem>
-            <SelectItem key="in progress" value="in progress">
-              En progreso
-            </SelectItem>
-            <SelectItem key="completed" value="completed">
-              Completada
-            </SelectItem>
+            <SelectItem key="all">Todos</SelectItem>
+            <SelectItem key="pending">Pendiente</SelectItem>
+            <SelectItem key="in progress">En progreso</SelectItem>
+            <SelectItem key="completed">Completada</SelectItem>
           </Select>
           {(searchTerm || statusFilter !== 'all') && (
             <Button
@@ -208,13 +219,13 @@ export default function TasksPage() {
               onPress={() => onTaskClick(task.id)}
             >
               <CardHeader className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h3 className="font-semibold">{task.title}</h3>
-                  <p className="text-sm text-default-500 mt-1">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold truncate">{task.title}</h3>
+                  <p className="text-sm text-default-500 mt-1 line-clamp-2">
                     {task.description}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3 ml-4 flex-shrink-0">
                   <Chip
                     color={getStatusColor(task.status)}
                     size="sm"
@@ -226,10 +237,7 @@ export default function TasksPage() {
                     color="danger"
                     size="sm"
                     variant="light"
-                    onPress={e => {
-                      e.stopPropagation()
-                      onDeleteTask(task.id)
-                    }}
+                    onPress={() => onDeleteTask(task.id)}
                   >
                     Eliminar
                   </Button>
@@ -247,6 +255,6 @@ export default function TasksPage() {
           )}
         </div>
       </section>
-    </DefaultLayout>
+    </div>
   )
 }

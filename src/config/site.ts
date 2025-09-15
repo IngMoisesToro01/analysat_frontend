@@ -1,21 +1,19 @@
-export type SiteConfig = typeof siteConfig
-
 export const siteConfig = {
-  name: 'Analysat Challenge',
-  description: 'Make beautiful websites regardless of your design experience.',
+  name: 'Analysat',
+  description: 'Gestión de proyectos y tareas',
   navItems: [
     {
-      label: 'Home',
-      href: '/',
+      label: 'Proyectos',
+      href: '/projects',
     },
   ],
   navMenuItems: [
     {
-      label: 'Projects',
+      label: 'Proyectos',
       href: '/projects',
     },
   ],
   links: {
-    sponsor: 'https://patreon.com/jrgarciadev',
+    sponsor: 'https://github.com/sponsors/nextui-org',
   },
 }

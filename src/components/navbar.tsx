@@ -13,7 +13,7 @@ import {
 } from '@heroui/navbar'
 import { link as linkStyles } from '@heroui/theme'
 import clsx from 'clsx'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { logoutAndClear } from '@/store/slices/authSlice'
@@ -25,7 +25,8 @@ import { Logo } from '@/components/icons'
 export const Navbar = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { token } = useAppSelector(state => state.auth)
+  const { userId } = useParams<{ userId: string }>()
+  const { token, user } = useAppSelector(state => state.auth)
 
   const handleLogout = () => {
     dispatch(logoutAndClear() as any)
@@ -60,7 +61,7 @@ export const Navbar = () => {
           <Link
             className="flex justify-start items-center gap-1"
             color="foreground"
-            href="/user/1/projects"
+            href={userId ? `/user/${userId}/projects` : '/login'}
           >
             <Logo />
             <p className="font-bold text-inherit">ACME</p>

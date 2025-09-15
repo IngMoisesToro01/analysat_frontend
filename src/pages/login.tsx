@@ -4,24 +4,23 @@ import { Input } from '@heroui/input'
 import { Button } from '@heroui/button'
 import { useNavigate } from 'react-router-dom'
 
-import DefaultLayout from '@/layouts/default'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { loginUser } from '@/store/slices/authSlice'
 
 export default function LoginPage() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { token } = useAppSelector(state => state.auth)
+  const { token, user } = useAppSelector(state => state.auth)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (token) {
-      navigate('/user/1/projects', { replace: true })
+    if (token && user) {
+      navigate(`/user/${user.id}/projects`, { replace: true })
     }
-  }, [token, navigate])
+  }, [token, user, navigate])
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,11 +38,17 @@ export default function LoginPage() {
   }
 
   return (
-    <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-6 py-10">
-        <form className="w-full max-w-sm space-y-4" onSubmit={onSubmit}>
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Analysat</h1>
+          <p className="text-default-500">Inicia sesión en tu cuenta</p>
+        </div>
+
+        <form className="space-y-4" onSubmit={onSubmit}>
           <Input
             isRequired
+            className="w-full"
             label="Email"
             type="email"
             value={email}
@@ -51,13 +56,20 @@ export default function LoginPage() {
           />
           <Input
             isRequired
+            className="w-full"
             label="Contraseña"
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
           />
-          {error && <p className="text-danger text-sm">{error}</p>}
-          <Button fullWidth color="primary" isLoading={loading} type="submit">
+          {error && <p className="text-danger text-sm text-center">{error}</p>}
+          <Button
+            fullWidth
+            className="mt-6"
+            color="primary"
+            isLoading={loading}
+            type="submit"
+          >
             Iniciar sesión
           </Button>
         </form>
@@ -70,7 +82,7 @@ export default function LoginPage() {
             </Link>
           </p>
         </div>
-      </section>
-    </DefaultLayout>
+      </div>
+    </div>
   )
 }

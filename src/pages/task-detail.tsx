@@ -7,7 +7,6 @@ import { Card, CardBody, CardHeader } from '@heroui/card'
 import { Chip } from '@heroui/chip'
 import { Select, SelectItem } from '@heroui/select'
 
-import DefaultLayout from '@/layouts/default'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
   fetchTasks,
@@ -15,6 +14,7 @@ import {
   deleteTask,
   Task,
 } from '@/store/slices/tasksSlice'
+import { logoutAndClear } from '@/store/slices/authSlice'
 
 const STATUS_OPTIONS = [
   { key: 'pending', label: 'Pendiente' },
@@ -80,6 +80,11 @@ export default function TaskDetailPage() {
     navigate(`/user/${userId}/projects/${projectId}/tasks`)
   }
 
+  const handleLogout = () => {
+    dispatch(logoutAndClear() as any)
+    navigate('/login', { replace: true })
+  }
+
   const getStatusColor = (status: Task['status']) => {
     switch (status) {
       case 'pending':
@@ -95,16 +100,26 @@ export default function TaskDetailPage() {
 
   if (!currentTask) {
     return (
-      <DefaultLayout>
+      <div className="min-h-screen bg-background">
+        <div className="flex justify-end p-4">
+          <Button color="danger" variant="flat" onPress={handleLogout}>
+            Cerrar sesión
+          </Button>
+        </div>
         <div className="container mx-auto max-w-2xl py-8 text-center">
           <p>Cargando tarea...</p>
         </div>
-      </DefaultLayout>
+      </div>
     )
   }
 
   return (
-    <DefaultLayout>
+    <div className="min-h-screen bg-background">
+      <div className="flex justify-end p-4">
+        <Button color="danger" variant="flat" onPress={handleLogout}>
+          Cerrar sesión
+        </Button>
+      </div>
       <section className="container mx-auto max-w-2xl py-8 space-y-6">
         <div className="flex items-center justify-between">
           <Button
@@ -188,9 +203,7 @@ export default function TaskDetailPage() {
                   }}
                 >
                   {STATUS_OPTIONS.map(option => (
-                    <SelectItem key={option.key} value={option.key}>
-                      {option.label}
-                    </SelectItem>
+                    <SelectItem key={option.key}>{option.label}</SelectItem>
                   ))}
                 </Select>
               </div>
@@ -205,6 +218,6 @@ export default function TaskDetailPage() {
           </CardBody>
         </Card>
       </section>
-    </DefaultLayout>
+    </div>
   )
 }

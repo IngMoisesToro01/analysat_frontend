@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { setUser, logoutAndClear } from '@/store/slices/authSlice'
@@ -12,6 +12,7 @@ interface AppRouterProps {
 export default function AppRouter({ children }: AppRouterProps) {
   const { token, user } = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
+  const location = useLocation()
 
   useEffect(() => {
     if (token && !user) {
@@ -34,7 +35,8 @@ export default function AppRouter({ children }: AppRouterProps) {
     return <div>Cargando...</div>
   }
 
-  if (token && user) {
+  // Solo redirigir si no estamos ya en una ruta de usuario
+  if (token && user && !location.pathname.startsWith('/user/')) {
     return <Navigate replace to={`/user/${user.id}/projects`} />
   }
 

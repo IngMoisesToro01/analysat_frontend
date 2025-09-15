@@ -33,7 +33,7 @@ src/routes/
 ### Rutas del Usuario (`/user/:userId/`)
 
 - `/user/:userId/projects/*` → Rutas de proyectos
-- `/user/*` → Redirige a `/user/1/projects`
+- `/user/*` → Redirige a `/user/{userId}/projects`
 
 ### Rutas de Proyectos (`/user/:userId/projects/`)
 
@@ -60,13 +60,13 @@ import { AppRoutes } from '@/routes/routes'
 
 ```typescript
 // Navegar a proyectos del usuario
-navigate('/user/1/projects')
+navigate(`/user/${userId}/projects`)
 
 // Navegar a tareas de un proyecto
-navigate('/user/1/projects/123')
+navigate(`/user/${userId}/projects/${projectId}`)
 
 // Navegar a detalle de tarea
-navigate('/user/1/projects/123/tasks/456')
+navigate(`/user/${userId}/projects/${projectId}/tasks/${taskId}`)
 ```
 
 ## 🎯 Ventajas de esta Estructura
