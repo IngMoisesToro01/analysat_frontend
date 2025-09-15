@@ -1,0 +1,5 @@
+export { AppRoutes } from './index'
+export { AuthRoutes } from './AuthRoutes'
+export { UserRoutes } from './UserRoutes'
+export { ProjectRoutes } from './ProjectRoutes'
+export { TaskRoutes } from './TaskRoutes'
